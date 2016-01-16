@@ -7,5 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="ionix.Utils" level="project" />
+    <orderEntry type="library" name="ionix.Data" level="project" />
+    <orderEntry type="library" name="sqljdbc42" level="project" />
+    <orderEntry type="library" name="gson-2.5" level="project" />
+    <orderEntry type="library" name="simple-xml-2.7.1" level="project" />
   </component>
 </module>
