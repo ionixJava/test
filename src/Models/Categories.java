@@ -30,4 +30,12 @@ public class Categories {
         this.description = value;
         return this;
     }
+
+    @DbSchema(columnName = "Picture")
+    private byte[] picture;
+    public byte[]  getPicture(){ return this.picture;}
+    public Categories setPicture(byte[]  value){
+        this.picture = value;
+        return this;
+    }
 }

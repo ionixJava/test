@@ -53,7 +53,7 @@ public final class Program {
             });
 
 
-            EntityCommandSelect cmd = new EntityCommandSelect(dataAccess);
+            EntityCommandSelect cmd = new EntityCommandSelect(dataAccess);//.setConvertType(true);
             final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
 
             Categories entity = cmd.selectSingle(Categories.class, provider, SqlQuery.toQuery(" where CategoryID=?",7));
