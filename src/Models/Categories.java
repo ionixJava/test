@@ -32,7 +32,7 @@ public class Categories {
     }
 
     @DbSchema(columnName = "Picture")
-    private byte[] picture;
+    private byte[] picture ;
     public byte[]  getPicture(){ return this.picture;}
     public Categories setPicture(byte[]  value){
         this.picture = value;
