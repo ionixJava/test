@@ -1,7 +1,6 @@
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import Models.Categories;
 import ionix.Data.*;
@@ -12,9 +11,13 @@ public final class Program {
     static final int length = 1000;
 
     public static void main(String[] args) {
-        testFilterCriteriaTest();
-        System.out.println("\n");
-        testSelectById();
+
+
+        testUpdate();
+       // testHashSet();
+       // testFilterCriteriaTest();
+        //System.out.println("\n");
+        //testSelectById();
     }
 
     public static void testTransaction() {
@@ -127,7 +130,7 @@ public final class Program {
         Connection conn = DB.createConnection();
         try (DbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) -> {
-                // System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
+                 System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
             });
 
             EntityCommandSelect cmd = new EntityCommandSelect(dataAccess);//.setConvertType(true);
@@ -161,5 +164,50 @@ public final class Program {
             System.out.println();
             System.out.println(Ser.toJson(entityList));
         }
+    }
+
+    public static void testUpdate(){
+        Connection conn = DB.createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) -> {
+                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
+            });
+
+            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
+
+            EntityCommandSelect selectCmd = new EntityCommandSelect(dataAccess);
+            Categories entity = selectCmd.selectById(Categories.class, provider, dataAccess.executeScalar(SqlQuery.toQuery("select max(CategoryID) from Categories"), int.class));
+            entity.setCategoryName("fcuk CategoryName").setDescription("fcuk Description");
+
+            EntityCommandExecute cmd = new ionix.Data.SqlServer.EntityCommandUpdate(dataAccess, Categories.class);
+            cmd.execute(entity, provider);
+
+            dataAccess.commit();
+        }
+    }
+
+    public static void testHashSet(){
+        ArrayList<String> al = new ArrayList<>();
+        HashSet<String> h = new HashSet<>();
+      //  Ha
+
+        for(Integer j = 0; j < 1000000;++j){
+            al.add(j.toString());
+            h.add(j.toString());
+        }
+
+        Date start = new Date();
+        for(int j = 0; j < 10000; ++j){
+            al.contains("55555");
+        }
+        Date end = new Date();
+        System.out.println((end.getTime() - start.getTime()));
+
+        start = new Date();
+        for(int j = 0; j < 10000; ++j){
+            h.contains("55555");
+        }
+        end = new Date();
+        System.out.println((end.getTime() - start.getTime()));
     }
 }

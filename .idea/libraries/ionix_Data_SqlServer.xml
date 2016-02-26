@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ionix.Data.SqlServer">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../lib/ionix.Data.SqlServer.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

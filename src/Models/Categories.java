@@ -2,6 +2,7 @@ package Models;
 
 import ionix.Annotation.DbSchema;
 import ionix.Annotation.Table;
+import ionix.Data.SqlValueType;
 import ionix.Data.StoreGeneratedPattern;
 
 
@@ -15,7 +16,7 @@ public class Categories {
         return this;
     }
 
-    @DbSchema(columnName = "CategoryName")
+    @DbSchema(columnName = "CategoryName", sqlValueType = SqlValueType.Text)
     private String categoryName;
     public String getCategoryName(){ return this.categoryName;}
     public Categories setCategoryName(String value){

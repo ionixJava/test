@@ -12,5 +12,6 @@
     <orderEntry type="library" name="sqljdbc42" level="project" />
     <orderEntry type="library" name="gson-2.5" level="project" />
     <orderEntry type="library" name="simple-xml-2.7.1" level="project" />
+    <orderEntry type="library" name="ionix.Data.SqlServer" level="project" />
   </component>
 </module>
