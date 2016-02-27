@@ -16,7 +16,7 @@ public class Categories {
         return this;
     }
 
-    @DbSchema(columnName = "CategoryName", sqlValueType = SqlValueType.Text)
+    @DbSchema(columnName = "CategoryName")
     private String categoryName;
     public String getCategoryName(){ return this.categoryName;}
     public Categories setCategoryName(String value){
@@ -32,11 +32,11 @@ public class Categories {
         return this;
     }
 
-//    @DbSchema(columnName = "Picture")
-//    private byte[] picture;
-//    public byte[]  getPicture(){ return this.picture;}
-//    public Categories setPicture(byte[]  value){
-//        this.picture = value;
-//        return this;
-//    }
+    @DbSchema(columnName = "Picture")
+    private byte[] picture;
+    public byte[]  getPicture(){ return this.picture;}
+    public Categories setPicture(byte[]  value){
+        this.picture = value;
+        return this;
+    }
 }

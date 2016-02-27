@@ -11,9 +11,8 @@ public final class Program {
     static final int length = 1000;
 
     public static void main(String[] args) {
-
-
-        testUpdate();
+        //testUpdate();
+        testInsert();
        // testHashSet();
        // testFilterCriteriaTest();
         //System.out.println("\n");
@@ -31,7 +30,7 @@ public final class Program {
                     .paramater("Name", "Cihat")
                     .paramater("Id", 9372);
 
-            System.out.println(dataAccess.executeUpdate(q));
+            System.out.println(dataAccess.executeUpdate(q, null).getValue());
 
 
             dataAccess.commit();
@@ -115,6 +114,8 @@ public final class Program {
             EntityCommandSelect cmd = new EntityCommandSelect(dataAccess);//.setConvertType(true);
             final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
 
+            List<Categories> el = cmd.query(Categories.class, provider, SqlQuery.toQuery("select * from NORTHWND.dbo.Categories"));
+
             Date start = new Date();
             for (int j = 0; j < length; ++j) {
                 List<Categories> entityList = cmd.query(Categories.class, provider, SqlQuery.toQuery("select * from NORTHWND.dbo.Categories"));
@@ -177,12 +178,33 @@ public final class Program {
 
             EntityCommandSelect selectCmd = new EntityCommandSelect(dataAccess);
             Categories entity = selectCmd.selectById(Categories.class, provider, dataAccess.executeScalar(SqlQuery.toQuery("select max(CategoryID) from Categories"), int.class));
-            entity.setCategoryName("fcuk CategoryName").setDescription("fcuk Description");
+            entity.setCategoryName("fcuk hamdi").setDescription("fcuk murat");
 
-            EntityCommandExecute cmd = new ionix.Data.SqlServer.EntityCommandUpdate(dataAccess, Categories.class);
+            EntityCommandExecute cmd = new ionix.Data.SqlServer.EntityCommandUpdate<>(dataAccess, Categories.class);
             cmd.execute(entity, provider);
 
             dataAccess.commit();
+        }
+    }
+
+    public static void testInsert(){
+        Connection conn = DB.createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) -> {
+                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
+            });
+
+            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
+
+
+            Categories entity = new Categories().setCategoryName("Bu Insert").setDescription("Bu Insert Açıklama");
+
+            EntityCommandExecute cmd = new ionix.Data.SqlServer.EntityCommandInsert<>(dataAccess, Categories.class);
+            cmd.execute(entity, provider);
+
+            System.out.println(entity.getCategoryID());
+
+            dataAccess.rollBack();
         }
     }
 
