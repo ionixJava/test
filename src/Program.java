@@ -3,238 +3,38 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 
-import Models.Categories;
+import Oracle.OracleTest;
 import ionix.Data.*;
-import ionix.Utils.Ser;
 
 public final class Program {
 
-    static final int length = 1000;
-
-    public static void main(String[] args) {
-        testDelete();
-    }
-
-    public static void testQuerySingle() {
-        Connection conn = DB.createConnection();
-        try (DbAccess dataAccess = new TransactionalDbAccess(conn)) {
 
 
-            EntityCommandSelect<Categories> cmd = new EntityCommandSelect<>(Categories.class, dataAccess);//.setConvertType(true);
-            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
+    public static void main(String[] args) throws Exception {
 
-            // String sql = "select CategoryID,CategoryName,Description from NORTHWND.dbo.Categories where CategoryID=?";
-            String sql = "select * from NORTHWND.dbo.Categories where CategoryID=?";
+        //SqlServerTest.testSelectById();
+      //  OracleTest.testSelect();
+       // OracleTest.testSelectSingle();
+       // OracleTest.testQuery();
+       // OracleTest.testQuerySingle();
+       // OracleTest.testSelectById();
 
-            Categories temp = cmd.querySingle(provider, SqlQuery.toQuery(sql, 7));
+        OracleTest.testUpdate();
 
-            Date start = new Date();
-            for (int j = 0; j < length; ++j) {
-                Categories entity = cmd.querySingle(provider, SqlQuery.toQuery(sql, 7));
-            }
-            Date end = new Date();
-            System.out.println((end.getTime() - start.getTime()));
-
-            // System.out.println(Ser.toJson(entity));
-        }
-    }
-
-    public static void testSelectSingle() {
-        Connection conn = DB.createConnection();
-        try (DbAccess dataAccess = new TransactionalDbAccess(conn)) {
-            dataAccess.onExecuteSqlComplete((e) -> {
-                // System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-            });
-
-
-            EntityCommandSelect<Categories> cmd = new EntityCommandSelect<>(Categories.class, dataAccess);//.setConvertType(true);
-            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-
-            Categories temp = cmd.selectSingle(provider, SqlQuery.toQuery(" where CategoryID=?", 7));
-
-            Date start = new Date();
-            for (int j = 0; j < length; ++j) {
-                Categories entity = cmd.selectSingle(provider, SqlQuery.toQuery(" where CategoryID=?", 7));
-            }
-            Date end = new Date();
-            System.out.println((end.getTime() - start.getTime()));
-
-            //System.out.println(Ser.toJson(entity));
-        }
-    }
-
-    public static void testSelect() {
-        Connection conn = DB.createConnection();
-        try (DbAccess dataAccess = new TransactionalDbAccess(conn)) {
-            dataAccess.onExecuteSqlComplete((e) -> {
-                // System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-            });
-
-
-            EntityCommandSelect<Categories> cmd = new EntityCommandSelect<>(Categories.class, dataAccess);//.setConvertType(true);
-            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-
-            List<Categories> temp = cmd.select(provider, null);
-
-            Date start = new Date();
-            for (int j = 0; j < length; ++j) {
-                List<Categories> entityList = cmd.select(provider, null);
-            }
-            Date end = new Date();
-            System.out.println((end.getTime() - start.getTime()));
-
-            //System.out.println(Ser.toJson(entityList));
-        }
-    }
-
-    public static void testQuery() {
-        Connection conn = DB.createConnection();
-        try (DbAccess dataAccess = new TransactionalDbAccess(conn)) {
-            dataAccess.onExecuteSqlComplete((e) -> {
-                 System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-            });
-
-
-            EntityCommandSelect<Categories> cmd = new EntityCommandSelect<>(Categories.class, dataAccess);//.setConvertType(true);
-            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-
-            List<Categories> el = cmd.query(provider, SqlQuery.toQuery("select * from NORTHWND.dbo.Categories"));
-
-            Date start = new Date();
-            for (int j = 0; j < length; ++j) {
-                List<Categories> entityList = cmd.query(provider, SqlQuery.toQuery("select * from NORTHWND.dbo.Categories"));
-            }
-            Date end = new Date();
-            System.out.println((end.getTime() - start.getTime()));
-
-            //System.out.println(Ser.toJson(entityList));
-        }
-    }
-
-    public static void testSelectById() {
-        Connection conn = DB.createConnection();
-        try (DbAccess dataAccess = new TransactionalDbAccess(conn)) {
-            dataAccess.onExecuteSqlComplete((e) -> {
-                 System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-            });
-
-            EntityCommandSelect<Categories> cmd = new EntityCommandSelect<>(Categories.class, dataAccess);//.setConvertType(true);
-            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-
-            Categories entity = cmd.selectById(provider, 8);
-
-            System.out.println(Ser.toJson(entity));
-        }
-    }
-
-    public static void testFilterCriteriaTest() {
-        Connection conn = DB.createConnection();
-        try (DbAccess dataAccess = new TransactionalDbAccess(conn)) {
-            dataAccess.onExecuteSqlComplete((e) -> {
-                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-            });
-
-
-            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-
-            FilterCriteriaList filters = new FilterCriteriaList()
-                    .add("CategoryID", ConditionOperator.In, "1", 2, 3, 4, 5)
-                    .add("CategoryName", ConditionOperator.StartsWith, "Co");
-
-            SqlQuery query = new SqlQueryProviderSelect(provider.createEntityMetaData(Categories.class)).toQuery()
-                    .combine(filters.toQuery());
-            EntityCommandSelect<Categories> cmd = new EntityCommandSelect<>(Categories.class, dataAccess);//.setConvertType(true);
-            List<Categories> entityList = cmd.query(provider, query);
-
-            System.out.println();
-            System.out.println(Ser.toJson(entityList));
-        }
-    }
-
-    public static void testUpdate(){
-        Connection conn = DB.createConnection();
-        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
-            dataAccess.onExecuteSqlComplete((e) -> {
-                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-            });
-
-            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-
-            EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess);
-            Categories entity = selectCmd.selectById(provider, dataAccess.executeScalar(SqlQuery.toQuery("select max(CategoryID) from Categories"), int.class));
-            entity.setCategoryName("fcuk hamdi").setDescription("fcuk murat");
-
-            EntityCommandExecute cmd = new ionix.Data.SqlServer.EntityCommandUpdate<>(Categories.class, dataAccess);
-            cmd.execute(entity, provider);
-
-            dataAccess.commit();
-        }
-    }
-
-    public static void testInsert(){
-        Connection conn = DB.createConnection();
-        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
-            dataAccess.onExecuteSqlComplete((e) -> {
-                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-            });
-
-            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-
-
-            Categories entity = new Categories().setCategoryName("Bu Insert").setDescription("Bu Insert Açıklama");
-
-            EntityCommandExecute<Categories> cmd = new ionix.Data.SqlServer.EntityCommandInsert<>(Categories.class, dataAccess);
-            cmd.execute(entity, provider);
-
-            System.out.println(entity.getCategoryID());
-
-            dataAccess.rollBack();
-        }
-    }
-
-    public static void testDelete(){
-        Connection conn = DB.createConnection();
-        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
-            dataAccess.onExecuteSqlComplete((e) -> {
-                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-            });
-
-            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-
-
-            Categories entity = new Categories().setCategoryName("Bu Insert").setDescription("Bu Insert Açıklama");
-
-            EntityCommandExecute<Categories> cmd = new ionix.Data.SqlServer.EntityCommandInsert<>(Categories.class, dataAccess);
-            cmd.execute(entity, provider);
-
-            System.out.println(entity.getCategoryID());
-
-            cmd = new ionix.Data.SqlServer.EntityCommandDelete<>(Categories.class, dataAccess);
-            cmd.execute(entity, provider);
-
-            dataAccess.commit();
-        }
-    }
-
-//    public static void testBatchUpdate(){
-//        Connection conn = DB.createConnection();
-//        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
-//            dataAccess.onExecuteSqlComplete((e) -> {
-//                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-//            });
+//        Connection conn = OracleTest.createConnection();
 //
-//            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
+//         PreparedStatement ps = conn.prepareStatement("SELECT SYSDATE FROM DUAL");
+//         ResultSet rs = ps.executeQuery();
 //
-//            EntityCommandSelect selectCmd = new EntityCommandSelect(dataAccess)
-//            Categories entity = selectCmd.select(Categories.class, provider, null);
-//            entity.setCategoryName("fcuk hamdi").setDescription("fcuk murat");
-//
-//            EntityCommandExecute cmd = new ionix.Data.SqlServer.EntityCommandUpdate<>(dataAccess, Categories.class);
-//            cmd.execute(entity, provider);
-//
-//            dataAccess.commit();
+//        while (rs.next()){
+//            System.out.println(rs.getObject(1));
 //        }
-//    }
+
+//        SqlServerTest.testBatchUpdate();
+//        SqlServerTest.testBatchInsert();
+    }
+
+
 
 
     public static void testHashSet(){
@@ -263,7 +63,7 @@ public final class Program {
     }
 
     public static void testBatchInsert(){
-        Connection conn = DB.createConnection();
+        Connection conn = SqlServerTest.createConnection();
         String template = "insert into Categories (CategoryName, Description) values(?,?);";
 
         try {
@@ -286,7 +86,7 @@ public final class Program {
 
 
     public static void testTransaction() {
-        Connection conn = DB.createConnection();
+        Connection conn = SqlServerTest.createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) -> {
                 System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
