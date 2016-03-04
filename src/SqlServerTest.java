@@ -288,4 +288,33 @@ public final class SqlServerTest {
         }
     }
 
+    public static void testBatchDelete(){
+        Connection conn = createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) ->
+                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+            );
+
+            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
+
+            EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess);
+            List<Categories> entityList = selectCmd.select(provider, null);
+
+            BatchCommandInsert<Categories> cmd = new ionix.Data.SqlServer.BatchCommandInsert<>(Categories.class, dataAccess);
+            cmd.setInsertFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
+
+            cmd.insert(entityList, provider);
+
+            dataAccess.commit();
+
+            List<Categories> deleteList = selectCmd.query(provider, SqlQuery.toQuery("select * from Categories where CategoryID > 8"));
+
+            BatchCommandDelete<Categories> batchDeleteCmd = new BatchCommandDelete<>(Categories.class, dataAccess);
+            int count = batchDeleteCmd.delete(deleteList, provider).length;
+            dataAccess.commit();
+
+            System.out.println("Silinen Kayıt Sayısı: " + count);
+        }
+    }
+
 }

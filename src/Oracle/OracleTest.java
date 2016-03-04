@@ -287,6 +287,35 @@ public final class OracleTest {
         }
     }
 
+    public static void testBatchDelete(){
+        Connection conn = createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) ->
+                    System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+            );
+
+            final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
+
+            EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess).setConvertType(true);
+            List<Categories> entityList = selectCmd.select(provider, null);
+
+            BatchCommandInsert<Categories> cmd = new ionix.Data.Oracle.BatchCommandInsert<>(Categories.class, dataAccess);
+
+            cmd.insert(entityList, provider);
+
+            dataAccess.commit();
+
+            List<Categories> deleteList = selectCmd.query(provider, SqlQuery.toQuery("select * from Categories where CategoryID > 8"));
+
+            BatchCommandDelete<Categories> batchDeleteCmd = new BatchCommandDelete<>(Categories.class, dataAccess);
+            int count = batchDeleteCmd.delete(deleteList, provider).length;
+            dataAccess.commit();
+
+            System.out.println("Silinen Kayıt Sayısı: " + count);
+        }
+    }
+
+
 
 
     public static void sequenceTest(){

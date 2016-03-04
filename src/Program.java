@@ -12,34 +12,37 @@ public final class Program {
 
     public static void main(String[] args) throws Exception {
 
-        SqlServerTest.testBatchInsert();
+        SqlServerTest.testBatchDelete();
 
-        SqlServerTest.testInsert();
-        SqlServerTest.testBatchInsert();
-
-        SqlServerTest.testInsert();
-        SqlServerTest.testSelectById();
-        SqlServerTest.testSelect();
-        SqlServerTest.testSelectSingle();
-        SqlServerTest.testQuery();
-        SqlServerTest.testQuerySingle();
-        SqlServerTest.testUpdate();
-        SqlServerTest.testInsert();
-        SqlServerTest.testBatchUpdate();
-        SqlServerTest.testBatchInsert();
-        SqlServerTest.testDelete();
-
-
-            OracleTest.testBatchInsert();
-        OracleTest.testInsert();
-        OracleTest.testBatchUpdate();
-        OracleTest.testDelete();
-        OracleTest.testSelect();
-        OracleTest.testSelectSingle();
-        OracleTest.testQuery();
-        OracleTest.testQuerySingle();
-        OracleTest.testSelectById();
-        OracleTest.testUpdate();
+       // SqlServerTest.testBatchInsert();
+//
+//        SqlServerTest.testInsert();
+//        SqlServerTest.testBatchInsert();
+//
+//        SqlServerTest.testInsert();
+//        SqlServerTest.testSelectById();
+//        SqlServerTest.testSelect();
+//        SqlServerTest.testSelectSingle();
+//        SqlServerTest.testQuery();
+//        SqlServerTest.testQuerySingle();
+//        SqlServerTest.testUpdate();
+//        SqlServerTest.testInsert();
+//        SqlServerTest.testBatchUpdate();
+//        SqlServerTest.testBatchInsert();
+//        SqlServerTest.testDelete();
+//
+//
+     //   OracleTest.testBatchDelete();
+//        OracleTest.testBatchInsert();
+//        OracleTest.testInsert();
+//        OracleTest.testBatchUpdate();
+//        OracleTest.testDelete();
+//        OracleTest.testSelect();
+//        OracleTest.testSelectSingle();
+//        OracleTest.testQuery();
+//        OracleTest.testQuerySingle();
+//        OracleTest.testSelectById();
+//        OracleTest.testUpdate();
 //
 //        OracleTest.sequenceTest();
 
