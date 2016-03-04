@@ -14,5 +14,6 @@
     <orderEntry type="library" name="simple-xml-2.7.1" level="project" />
     <orderEntry type="library" name="ionix.Data.SqlServer" level="project" />
     <orderEntry type="library" name="ojdbc7" level="project" />
+    <orderEntry type="library" name="ionix.Data.Oracle" level="project" />
   </component>
 </module>

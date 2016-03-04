@@ -170,10 +170,10 @@ public final class OracleTest {
             final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
 
             EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess).setConvertType(true);
-            Categories entity = selectCmd.selectById(provider, dataAccess.executeScalar(SqlQuery.toQuery("select max(CategoryID) from Categories"), int.class));
+            Categories entity = selectCmd.selectById(provider, dataAccess.executeScalar(int.class, SqlQuery.toQuery("select max(CategoryID) from Categories")));
             entity.setCategoryName("Seafood").setDescription("Seaweed and fish");
 
-            EntityCommandUpdate<Categories> cmd = new ionix.Data.SqlServer.EntityCommandUpdate<>(Categories.class, dataAccess);
+            EntityCommandUpdate<Categories> cmd = new EntityCommandUpdate<>(Categories.class, dataAccess);
             cmd.setUpdatedFields(new HashSet<String>() {{ add("CategoryName".toUpperCase()); add("Description".toUpperCase()); }});
             cmd.update(entity, provider);
 
@@ -181,111 +181,124 @@ public final class OracleTest {
         }
     }
 
-//    public static void testInsert(){
-//        Connection conn = createConnection();
-//        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
-//            dataAccess.onExecuteSqlComplete((e) -> {
-//                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-//            });
-//
-//            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-//
-//
-//            Categories entity = new Categories().setCategoryName("Bu Insert").setDescription("Bu Insert Açıklama");
-//
-//            EntityCommandInsert<Categories> cmd = new ionix.Data.SqlServer.EntityCommandInsert<>(Categories.class, dataAccess);
-//            cmd.setInsertFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
-//            cmd.insert(entity, provider);
-//
-//            System.out.println(entity.getCategoryID());
-//
-//            dataAccess.commit();
-//        }
-//    }
-//
-//    public static void testDelete(){
-//        Connection conn = createConnection();
-//        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
-//            dataAccess.onExecuteSqlComplete((e) -> {
-//                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-//            });
-//
-//            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-//
-//
-//            Categories entity = new Categories().setCategoryName("Bu Insert").setDescription("Bu Insert Açıklama");
-//
-//            EntityCommandExecute<Categories> cmd = new ionix.Data.SqlServer.EntityCommandInsert<>(Categories.class, dataAccess);
-//            cmd.execute(entity, provider);
-//
-//            System.out.println(entity.getCategoryID());
-//
-//            cmd = new ionix.Data.SqlServer.EntityCommandDelete<>(Categories.class, dataAccess);
-//            cmd.execute(entity, provider);
-//
-//            dataAccess.commit();
-//        }
-//    }
-//
-//    public static void testBatchUpdate(){
-//        Connection conn = createConnection();
-//        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
-//            dataAccess.onExecuteSqlComplete((e) -> {
-//                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-//            });
-//
-//            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-//
-//            EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess);
-//            List<Categories> entityList = selectCmd.select(provider, null);
-//
-//            entityList.forEach((item)-> {
-//                // item.setCategoryName(item.getCategoryName() + 1);
-//                // item.setDescription(item.getDescription() + 2);
-//
-//                item.setCategoryName(item.getCategoryName().replace('1', ' ').trim());
-//                item.setDescription(item.getDescription().replace('2', ' ').trim());
-//            });
-//
-//            BatchCommandExecute<Categories> cmd = new ionix.Data.SqlServer.BatchCommandUpdate<>(Categories.class, dataAccess);
-//            int result = cmd.execute(entityList, provider).length;
-//
-//            System.out.println(result);
-//
-//            dataAccess.commit();
-//        }
-//    }
-//
-//
-//    public static void testBatchInsert(){
-//        Connection conn = createConnection();
-//        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
-//            dataAccess.onExecuteSqlComplete((e) -> {
-//                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
-//            });
-//
-//            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
-//
-//            EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess);
-//            List<Categories> entityList = selectCmd.select(provider, null);
-//
-//            entityList.forEach((item)-> {
-//                item.setCategoryName(item.getCategoryName() + 1);
-//                item.setDescription(item.getDescription() + 2);
-//
-//                //item.setCategoryName(item.getCategoryName().replace('1', ' ').trim());
-//                // item.setDescription(item.getDescription().replace('2', ' ').trim());
-//            });
-//
-//            BatchCommandInsert<Categories> cmd = new ionix.Data.SqlServer.BatchCommandInsert<>(Categories.class, dataAccess);
-//            cmd.setInsertFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
-//
-//            int result = cmd.insert(entityList, provider).length;
-//
-//            System.out.println(result);
-//
-//            dataAccess.commit();
-//        }
-//    }
+    public static void testInsert(){
+        Connection conn = createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) ->
+                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()) )
+            );
+
+            final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
+
+            Categories entity = new Categories().setCategoryName("Bu Insert").setDescription("Bu Insert Açıklama");
+
+            EntityCommandInsert<Categories> cmd = new ionix.Data.Oracle.EntityCommandInsert<>(Categories.class, dataAccess);
+            cmd.insert(entity, provider);
+
+            System.out.println(entity.getCategoryID());
+
+            dataAccess.commit();
+        }
+    }
+
+    public static void testDelete(){
+        Connection conn = createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) ->
+                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+            );
+
+            final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
+
+
+            Categories entity = new Categories().setCategoryName("Bu Insert").setDescription("Bu Insert Açıklama");
+
+            EntityCommandExecute<Categories> cmd = new ionix.Data.Oracle.EntityCommandInsert<>(Categories.class, dataAccess);
+            cmd.execute(entity, provider);
+            dataAccess.commit();
+
+            System.out.println(entity.getCategoryID());
+
+            cmd = new ionix.Data.EntityCommandDelete<>(Categories.class, dataAccess);
+            cmd.execute(entity, provider);
+
+            dataAccess.commit();
+        }
+    }
+
+    public static void testBatchUpdate(){
+        Connection conn = createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) ->
+                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+            );
+
+            final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
+
+            EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess).setConvertType(true);
+            List<Categories> entityList = selectCmd.select(provider, null);
+
+            entityList.forEach((item)-> {
+                 //item.setCategoryName(item.getCategoryName() + 1);
+                 //item.setDescription(item.getDescription() + 2);
+
+                item.setCategoryName(item.getCategoryName().replace('1', ' ').trim());
+                item.setDescription(item.getDescription().replace('2', ' ').trim());
+            });
+
+            BatchCommandExecute<Categories> cmd = new ionix.Data.BatchCommandUpdate<>(Categories.class, dataAccess);
+            int result = cmd.execute(entityList, provider).length;
+
+            System.out.println(result);
+
+            dataAccess.commit();
+        }
+    }
+
+
+    public static void testBatchInsert(){
+        Connection conn = createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) ->
+                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+            );
+
+            final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
+
+            EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess).setConvertType(true);
+            List<Categories> entityList = selectCmd.select(provider, null);
+
+            entityList.forEach((item)-> {
+                item.setCategoryName(item.getCategoryName() + 1);
+                item.setDescription(item.getDescription() + 2);
+
+                //item.setCategoryName(item.getCategoryName().replace('1', ' ').trim());
+                // item.setDescription(item.getDescription().replace('2', ' ').trim());
+            });
+
+            BatchCommandInsert<Categories> cmd = new ionix.Data.Oracle.BatchCommandInsert<>(Categories.class, dataAccess);
+           // cmd.setInsertFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
+
+            int result = cmd.insert(entityList, provider).length;
+
+            System.out.println(result);
+
+            dataAccess.commit();
+        }
+    }
+
+
+
+    public static void sequenceTest(){
+        String sql = "insert into Categories (categoryid,categoryname,description)"+
+                "  VALUES (sqe_Categories.NEXTVAL,'with sequence', 'Açıklama')";
+
+        SqlQuery q = SqlQuery.toQuery(sql);
+
+        Connection conn = createConnection();
+        try (DbAccess dataAccess = new DbAccess(conn)) {
+            System.out.println(dataAccess.executeUpdateSequence(q,"CATEGORYID").getGeneratedKey());
+        }
+    }
 
 }

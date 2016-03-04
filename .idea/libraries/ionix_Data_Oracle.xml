@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ionix.Data.Oracle">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../lib/ionix.Data.Oracle.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

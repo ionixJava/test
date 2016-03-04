@@ -170,10 +170,10 @@ public final class SqlServerTest {
             final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
 
             EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess);
-            Categories entity = selectCmd.selectById(provider, dataAccess.executeScalar(SqlQuery.toQuery("select max(CategoryID) from Categories"), int.class));
+            Categories entity = selectCmd.selectById(provider, dataAccess.executeScalar(int.class, SqlQuery.toQuery("select max(CategoryID) from Categories")));
             entity.setCategoryName("new Category").setDescription("new Description");
 
-            EntityCommandUpdate<Categories> cmd = new ionix.Data.SqlServer.EntityCommandUpdate<>(Categories.class, dataAccess);
+            EntityCommandUpdate<Categories> cmd = new EntityCommandUpdate<>(Categories.class, dataAccess);
             cmd.setUpdatedFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
             cmd.update(entity, provider);
 
@@ -220,7 +220,7 @@ public final class SqlServerTest {
 
             System.out.println(entity.getCategoryID());
 
-            cmd = new ionix.Data.SqlServer.EntityCommandDelete<>(Categories.class, dataAccess);
+            cmd = new EntityCommandDelete<>(Categories.class, dataAccess);
             cmd.execute(entity, provider);
 
             dataAccess.commit();
@@ -247,7 +247,7 @@ public final class SqlServerTest {
                 item.setDescription(item.getDescription().replace('2', ' ').trim());
             });
 
-            BatchCommandExecute<Categories> cmd = new ionix.Data.SqlServer.BatchCommandUpdate<>(Categories.class, dataAccess);
+            BatchCommandExecute<Categories> cmd = new BatchCommandUpdate<>(Categories.class, dataAccess);
             int result = cmd.execute(entityList, provider).length;
 
             System.out.println(result);

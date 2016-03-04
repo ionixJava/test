@@ -14,6 +14,8 @@ public class OracleSchemaMetaDataProvider extends DbSchemaMetaDataProvider {
     protected void setExtendedSchema(SchemaInfo schemaInfo, Field field) {
         super.setExtendedSchema(schemaInfo, field);
         schemaInfo.setColumnName(schemaInfo.getColumnName().toUpperCase());
+        if (schemaInfo.getDatabaseGeneratedOption() == StoreGeneratedPattern.Identity)
+            schemaInfo.setDatabaseGeneratedOption(StoreGeneratedPattern.AutoGenerateSequence);
     }
 
     @Override
@@ -21,5 +23,4 @@ public class OracleSchemaMetaDataProvider extends DbSchemaMetaDataProvider {
         String tableName = ExtAnnotation.getTableName(entityClass).split("\\.")[2];
         return new EntityMetaData(entityClass, tableName);
     }
-
 }
