@@ -315,6 +315,37 @@ public final class OracleTest {
         }
     }
 
+    public static void testCommandFactory() {
+        Connection conn = createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) ->
+                    System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+            );
+
+            final EntityMetaDataProvider provider = new OracleSchemaMetaDataProvider();
+
+            Class<Categories> entityClass = Categories.class;
+            CommandFactory f = new ionix.Data.Oracle.CommandFactory(dataAccess);
+            Categories entity = f.createSelectCommand(entityClass).setConvertType(true).selectById(provider, 8);
+
+            f.createEntityCommand(entityClass, EntityCommandType.Insert).execute(entity, provider);
+            f.createEntityCommand(entityClass, EntityCommandType.Update).execute(entity, provider);
+            f.createEntityCommand(entityClass, EntityCommandType.Delete).execute(entity, provider);
+
+
+            List<Categories> entityList = f.createSelectCommand(entityClass).setConvertType(true).select(provider, null);
+            f.createBatchCommand(entityClass, EntityCommandType.Insert).execute(entityList, provider);
+            f.createBatchCommand(entityClass, EntityCommandType.Update).execute(entityList, provider);
+
+            entityList = f.createSelectCommand(entityClass).setConvertType(true).query(provider, SqlQuery.toQuery("select * from Categories where CategoryID > ?", 8));
+            int[] deleteCount = f.createBatchCommand(entityClass, EntityCommandType.Delete).execute(entityList, provider);
+
+            dataAccess.commit();
+
+            System.out.println("Silinen Kayıt: " + deleteCount.length);
+        }
+    }
+
 
 
 

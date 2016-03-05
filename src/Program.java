@@ -3,6 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 
+import Models.Categories;
 import Oracle.OracleTest;
 import ionix.Data.*;
 
@@ -11,6 +12,13 @@ public final class Program {
 
 
     public static void main(String[] args) throws Exception {
+        OracleTest.testCommandFactory();
+//        Connection conn = SqlServerTest.createConnection();
+//        TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn);
+//        BatchCommandExecuteBase<Categories> ec = new ionix.Data.BatchCommandUpdate<>(Categories.class, dataAccess);
+//
+//        System.out.println((ec instanceof BatchCommandExecute));
+
 
         //SqlServerTest.testBatchDelete();
 
@@ -27,16 +35,16 @@ public final class Program {
        // SqlServerTest.testQuerySingle();
        // SqlServerTest.testUpdate();
        // SqlServerTest.testInsert();
-       // SqlServerTest.testBatchUpdate();
+      //  SqlServerTest.testBatchUpdate();
        // SqlServerTest.testBatchInsert();
-        SqlServerTest.testDelete();
+       // SqlServerTest.testDelete();
 
 
-//        OracleTest.testBatchDelete();
+      //  OracleTest.testBatchDelete();
 //        OracleTest.testBatchInsert();
 //        OracleTest.testInsert();
-//        OracleTest.testBatchUpdate();
-        OracleTest.testDelete();
+      //  OracleTest.testBatchUpdate();
+       // OracleTest.testDelete();
 //        OracleTest.testSelect();
 //        OracleTest.testSelectSingle();
 //        OracleTest.testQuery();
