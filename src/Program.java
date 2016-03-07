@@ -12,7 +12,8 @@ public final class Program {
 
 
     public static void main(String[] args) throws Exception {
-        OracleTest.testCommandFactory();
+        SqlServerTest.testCommandAdapter();
+        //OracleTest.testCommandFactory();
 //        Connection conn = SqlServerTest.createConnection();
 //        TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn);
 //        BatchCommandExecuteBase<Categories> ec = new ionix.Data.BatchCommandUpdate<>(Categories.class, dataAccess);

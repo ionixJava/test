@@ -4,6 +4,7 @@ import ionix.Utils.Ser;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -160,7 +161,7 @@ public final class SqlServerTest {
         }
     }
 
-    public static void testUpdate(){
+    public static void testUpdate() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) -> {
@@ -174,14 +175,17 @@ public final class SqlServerTest {
             entity.setCategoryName("new Category").setDescription("new Description");
 
             EntityCommandUpdate<Categories> cmd = new EntityCommandUpdate<>(Categories.class, dataAccess);
-            cmd.setUpdatedFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
+            cmd.setUpdatedFields(new HashSet<String>() {{
+                add("CategoryName");
+                add("Description");
+            }});
             cmd.update(entity, provider);
 
             dataAccess.commit();
         }
     }
 
-    public static void testInsert(){
+    public static void testInsert() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) -> {
@@ -194,7 +198,10 @@ public final class SqlServerTest {
             Categories entity = new Categories().setCategoryName("Bu Insert").setDescription("Bu Insert Açıklama");
 
             EntityCommandInsert<Categories> cmd = new ionix.Data.SqlServer.EntityCommandInsert<>(Categories.class, dataAccess);
-            cmd.setInsertFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
+            cmd.setInsertFields(new HashSet<String>() {{
+                add("CategoryName");
+                add("Description");
+            }});
             cmd.insert(entity, provider);
 
             System.out.println(entity.getCategoryID());
@@ -203,7 +210,7 @@ public final class SqlServerTest {
         }
     }
 
-    public static void testDelete(){
+    public static void testDelete() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) -> {
@@ -227,7 +234,7 @@ public final class SqlServerTest {
         }
     }
 
-    public static void testBatchUpdate(){
+    public static void testBatchUpdate() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) -> {
@@ -239,7 +246,7 @@ public final class SqlServerTest {
             EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess);
             List<Categories> entityList = selectCmd.select(provider, null);
 
-            entityList.forEach((item)-> {
+            entityList.forEach((item) -> {
                 // item.setCategoryName(item.getCategoryName() + 1);
                 // item.setDescription(item.getDescription() + 2);
 
@@ -257,7 +264,7 @@ public final class SqlServerTest {
     }
 
 
-    public static void testBatchInsert(){
+    public static void testBatchInsert() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) -> {
@@ -269,7 +276,7 @@ public final class SqlServerTest {
             EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess);
             List<Categories> entityList = selectCmd.select(provider, null);
 
-            entityList.forEach((item)-> {
+            entityList.forEach((item) -> {
                 item.setCategoryName(item.getCategoryName() + 1);
                 item.setDescription(item.getDescription() + 2);
 
@@ -278,7 +285,10 @@ public final class SqlServerTest {
             });
 
             BatchCommandInsert<Categories> cmd = new ionix.Data.SqlServer.BatchCommandInsert<>(Categories.class, dataAccess);
-            cmd.setInsertFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
+            cmd.setInsertFields(new HashSet<String>() {{
+                add("CategoryName");
+                add("Description");
+            }});
 
             int result = cmd.insert(entityList, provider).length;
 
@@ -288,11 +298,11 @@ public final class SqlServerTest {
         }
     }
 
-    public static void testBatchDelete(){
+    public static void testBatchDelete() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) ->
-                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+                    System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
             );
 
             final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
@@ -301,7 +311,10 @@ public final class SqlServerTest {
             List<Categories> entityList = selectCmd.select(provider, null);
 
             BatchCommandInsert<Categories> cmd = new ionix.Data.SqlServer.BatchCommandInsert<>(Categories.class, dataAccess);
-            cmd.setInsertFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
+            cmd.setInsertFields(new HashSet<String>() {{
+                add("CategoryName");
+                add("Description");
+            }});
 
             cmd.insert(entityList, provider);
 
@@ -317,4 +330,52 @@ public final class SqlServerTest {
         }
     }
 
+    public static void testCommandAdapter() {
+        Connection conn = createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) ->
+                    System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+            );
+
+            final CommandFactory factory = new ionix.Data.SqlServer.CommandFactory(dataAccess);
+            final EntityMetaDataProvider provider = new DbSchemaMetaDataProvider();
+
+            CommandAdapter cmd = new CommandAdapter(factory, provider);
+            List<Categories> list = cmd.select(Categories.class, null);
+
+            Categories en = cmd.selectSingle(Categories.class, null);
+
+            list = cmd.query(Categories.class, "select top 3 * from Categories;");
+            en = cmd.querySingle(Categories.class, "select * from Categories where CategoryID=?", 3);
+
+            en.setCategoryName(en.getCategoryName() + 5);
+
+          //  cmd.update(Categories.class, en);
+
+            Categories newEn = new Categories().setCategoryName("bu yeni").setDescription("Bu da Yeni").setPicture(new byte[20]);
+
+          //  cmd.insert(Categories.class, newEn, "CategoryName", "Picture");
+
+           // cmd.delete(Categories.class, newEn);
+
+            list.forEach((item)->
+                item.setDescription(item.getDescription() + 1)
+            );
+
+         //   cmd.batchUpdate(Categories.class, list, "CategoryID", "Description");//ID kolon mutlaka belirtilmeli.
+            //cmd.batchUpdate(Categories.class, list);//ID kolon mutlaka belirtilmeli.
+
+            ArrayList<Categories> newList = new ArrayList<>();
+            for(int j = 0; j < 3; ++j)
+                newList.add(new Categories().setCategoryName(Integer.toString(j)).setDescription(Integer.toString(j)).setPicture(new byte[j]));
+
+            cmd.batchInsert(Categories.class, newList, "CategoryName");
+          //  cmd.batchInsert(Categories.class, newList, "CategoryName", "Picture");
+            cmd.batchInsert(Categories.class, newList);
+
+
+
+            dataAccess.commit();
+        }
+    }
 }
