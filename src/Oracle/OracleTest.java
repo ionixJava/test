@@ -6,6 +6,7 @@ import ionix.Utils.Ser;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -52,7 +53,7 @@ public final class OracleTest {
         Connection conn = createConnection();
         try (DbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) -> {
-                 System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
+                System.out.println("Complete: " + e.getQuery().toString() + " - " + e.isSucceeded());
             });
 
             EntityCommandSelect<Categories> cmd = new EntityCommandSelect<>(Categories.class, dataAccess).setConvertType(true);
@@ -159,11 +160,11 @@ public final class OracleTest {
         }
     }
 
-    public static void testUpdate(){
+    public static void testUpdate() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) -> {
-               // System.out.println(e.getQuery().toString() + " - " + e.isSucceeded());
+                // System.out.println(e.getQuery().toString() + " - " + e.isSucceeded());
                 System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()));
             });
 
@@ -174,18 +175,21 @@ public final class OracleTest {
             entity.setCategoryName("Seafood").setDescription("Seaweed and fish");
 
             EntityCommandUpdate<Categories> cmd = new EntityCommandUpdate<>(Categories.class, dataAccess);
-            cmd.setUpdatedFields(new HashSet<String>() {{ add("CategoryName".toUpperCase()); add("Description".toUpperCase()); }});
+            cmd.setUpdatedFields(new HashSet<String>() {{
+                add("CategoryName".toUpperCase());
+                add("Description".toUpperCase());
+            }});
             cmd.update(entity, provider);
 
             dataAccess.commit();
         }
     }
 
-    public static void testInsert(){
+    public static void testInsert() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) ->
-                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()) )
+                    System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
             );
 
             final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
@@ -201,11 +205,11 @@ public final class OracleTest {
         }
     }
 
-    public static void testDelete(){
+    public static void testDelete() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) ->
-                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+                    System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
             );
 
             final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
@@ -226,11 +230,11 @@ public final class OracleTest {
         }
     }
 
-    public static void testBatchUpdate(){
+    public static void testBatchUpdate() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) ->
-                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+                    System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
             );
 
             final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
@@ -238,9 +242,9 @@ public final class OracleTest {
             EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess).setConvertType(true);
             List<Categories> entityList = selectCmd.select(provider, null);
 
-            entityList.forEach((item)-> {
-                 //item.setCategoryName(item.getCategoryName() + 1);
-                 //item.setDescription(item.getDescription() + 2);
+            entityList.forEach((item) -> {
+                //item.setCategoryName(item.getCategoryName() + 1);
+                //item.setDescription(item.getDescription() + 2);
 
                 item.setCategoryName(item.getCategoryName().replace('1', ' ').trim());
                 item.setDescription(item.getDescription().replace('2', ' ').trim());
@@ -256,11 +260,11 @@ public final class OracleTest {
     }
 
 
-    public static void testBatchInsert(){
+    public static void testBatchInsert() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) ->
-                System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
+                    System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()))
             );
 
             final OracleSchemaMetaDataProvider provider = new OracleSchemaMetaDataProvider();
@@ -268,7 +272,7 @@ public final class OracleTest {
             EntityCommandSelect<Categories> selectCmd = new EntityCommandSelect<>(Categories.class, dataAccess).setConvertType(true);
             List<Categories> entityList = selectCmd.select(provider, null);
 
-            entityList.forEach((item)-> {
+            entityList.forEach((item) -> {
                 item.setCategoryName(item.getCategoryName() + 1);
                 item.setDescription(item.getDescription() + 2);
 
@@ -277,7 +281,7 @@ public final class OracleTest {
             });
 
             BatchCommandInsert<Categories> cmd = new ionix.Data.Oracle.BatchCommandInsert<>(Categories.class, dataAccess);
-           // cmd.setInsertFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
+            // cmd.setInsertFields(new HashSet<String>() {{ add("CategoryName"); add("Description"); }});
 
             int result = cmd.insert(entityList, provider).length;
 
@@ -287,7 +291,7 @@ public final class OracleTest {
         }
     }
 
-    public static void testBatchDelete(){
+    public static void testBatchDelete() {
         Connection conn = createConnection();
         try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
             dataAccess.onExecuteSqlComplete((e) ->
@@ -347,18 +351,77 @@ public final class OracleTest {
     }
 
 
-
-
-    public static void sequenceTest(){
-        String sql = "insert into Categories (categoryid,categoryname,description)"+
+    public static void sequenceTest() {
+        String sql = "insert into Categories (categoryid,categoryname,description)" +
                 "  VALUES (sqe_Categories.NEXTVAL,'with sequence', 'Açıklama')";
 
         SqlQuery q = SqlQuery.toQuery(sql);
 
         Connection conn = createConnection();
         try (DbAccess dataAccess = new DbAccess(conn)) {
-            System.out.println(dataAccess.executeUpdateSequence(q,"CATEGORYID").getGeneratedKey());
+            System.out.println(dataAccess.executeUpdateSequence(q, "CATEGORYID").getGeneratedKey());
         }
     }
 
+    public static void testCommandAdapter() {
+        Connection conn = createConnection();
+        try (TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn)) {
+            dataAccess.onExecuteSqlComplete((e) -> {
+                String pureSql = SqlQueryHelper.toParameterlessQuery(e.getQuery());
+                if (!pureSql.toLowerCase().contains("select"))
+                    System.out.println(SqlQueryHelper.toParameterlessQuery(e.getQuery()));
+                //  System.out.println(e.getQuery().toString());
+            });
+
+            final CommandFactory factory = new ionix.Data.Oracle.CommandFactory(dataAccess);
+            final EntityMetaDataProvider provider = new OracleSchemaMetaDataProvider();
+
+            CommandAdapter cmd = new CommandAdapter(factory, provider);
+            Repository<Categories> rep = new Repository<>(Categories.class, cmd);
+
+
+            List<Categories> list = rep.select(null);
+
+            Categories en = rep.selectSingle(null);
+
+            list = rep.query("select * from Categories where rownum < 4");
+            en = rep.querySingle("select * from Categories where CategoryID=?", 3);
+
+            en.setCategoryName(en.getCategoryName() + 5);//.setPicture(new byte[16]);
+
+            // rep.update(en, "PICTURE");
+            // rep.update(en, "CATEGORYNAME", "PICTURE");
+            //  rep.update(en);
+
+            Categories newEn = new Categories().setCategoryName("bu yeni").setDescription("Bu da Yeni");//.setPicture(new byte[20]);
+
+            //rep.insert(newEn, "CATEGORYNAME");
+             rep.insert(newEn, "CATEGORYNAME", "PICTURE");
+            //  rep.insert(newEn);
+
+            //  rep.delete(newEn);
+
+
+            list.forEach((item) ->
+                    item.setDescription(item.getDescription() + 1)
+            );
+
+            //cmd.batchUpdate(Categories.class, list, "DESCRIPTION");
+            //  cmd.batchUpdate(Categories.class, list, "DESCRIPTION", "PICTURE");
+            //  cmd.batchUpdate(Categories.class, list);
+
+            ArrayList<Categories> newList = new ArrayList<>();
+            for (int j = 0; j < 3; ++j)
+                newList.add(new Categories().setCategoryName(Integer.toString(j)).setDescription(Integer.toString(j)));//.setPicture(new byte[j]));
+
+            rep.batchInsert(newList, "CATEGORYNAME");
+            rep.batchInsert(newList, "CATEGORYNAME", "PICTURE");
+            rep.batchInsert(newList);
+
+            rep.batchDelete(newList);
+
+
+            dataAccess.commit();
+        }
+    }
 }

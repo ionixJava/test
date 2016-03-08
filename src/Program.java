@@ -12,7 +12,7 @@ public final class Program {
 
 
     public static void main(String[] args) throws Exception {
-        SqlServerTest.testCommandAdapter();
+        OracleTest.testCommandAdapter();
         //OracleTest.testCommandFactory();
 //        Connection conn = SqlServerTest.createConnection();
 //        TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn);
