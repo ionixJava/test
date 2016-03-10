@@ -5,9 +5,6 @@ import ionix.Data.*;
 
 import java.lang.reflect.Field;
 
-/**
- * Created by mehme on 3.03.2016.
- */
 public class OracleSchemaMetaDataProvider extends DbSchemaMetaDataProvider {
 
     @Override
@@ -19,8 +16,15 @@ public class OracleSchemaMetaDataProvider extends DbSchemaMetaDataProvider {
     }
 
     @Override
-    protected EntityMetaData generateEntityMetaData(Class entityClass){
-        String tableName = ExtAnnotation.getTableName(entityClass).split("\\.")[2];
+    protected EntityMetaData generateEntityMetaData(Class entityClass) {
+        String tableName = null;
+
+        String[] arr = ExtAnnotation.getTableName(entityClass).split("\\.");
+        if (arr.length == 3)
+            tableName = ExtAnnotation.getTableName(entityClass).split("\\.")[2];
+        else
+            tableName = ExtAnnotation.getTableName(entityClass);
         return new EntityMetaData(entityClass, tableName);
+
     }
 }

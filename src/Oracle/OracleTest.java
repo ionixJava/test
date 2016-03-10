@@ -1,11 +1,11 @@
 package Oracle;
 
 import Models.Categories;
+import Models.Products;
 import ionix.Data.*;
 import ionix.Utils.Ser;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -16,14 +16,7 @@ public final class OracleTest {
     static final int length = 1000;
 
     public final static Connection createConnection() {
-        try {
-            Class.forName("oracle.jdbc.driver.OracleDriver");
-            String ok = "do not show dupicate for this";
-            Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@DB:1521:ORCL", "NORTHWND", "1");
-            return conn;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        return ionixFactory.createConnection();
     }
 
 
@@ -396,7 +389,7 @@ public final class OracleTest {
             Categories newEn = new Categories().setCategoryName("bu yeni").setDescription("Bu da Yeni");//.setPicture(new byte[20]);
 
             //rep.insert(newEn, "CATEGORYNAME");
-             rep.insert(newEn, "CATEGORYNAME", "PICTURE");
+            rep.insert(newEn, "CATEGORYNAME", "PICTURE");
             //  rep.insert(newEn);
 
             //  rep.delete(newEn);
@@ -419,6 +412,27 @@ public final class OracleTest {
             rep.batchInsert(newList);
 
             rep.batchDelete(newList);
+
+
+            dataAccess.commit();
+        }
+    }
+
+
+    public static void test(){
+        try(TransactionalDbAccess dataAccess = ionixFactory.createTransactionalDbAccess())
+        {
+            Repository<Products> rep = ionixFactory.createRepository(Products.class, dataAccess);
+
+            Products entity = rep.selectById(1);
+
+            entity.setProductName("Chai değişti");
+
+            rep.update(entity);
+
+            List<Products> entityList = rep.query("select * from products where rownum <= 3");
+
+            rep.batchInsert(entityList);
 
 
             dataAccess.commit();

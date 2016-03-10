@@ -12,7 +12,8 @@ public final class Program {
 
 
     public static void main(String[] args) throws Exception {
-        OracleTest.testCommandAdapter();
+        OracleTest.test();
+      //  OracleTest.testCommandAdapter();
         //OracleTest.testCommandFactory();
 //        Connection conn = SqlServerTest.createConnection();
 //        TransactionalDbAccess dataAccess = new TransactionalDbAccess(conn);
