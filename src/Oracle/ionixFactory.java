@@ -60,6 +60,6 @@ public final class ionixFactory {
     }
 
     public static EntityMetaDataProvider createEntityMetaDataProvider() {
-        return new DbSchemaMetaDataProvider();
+        return new OracleSchemaMetaDataProvider();//Değiştir
     }
 }

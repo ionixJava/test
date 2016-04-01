@@ -4,15 +4,39 @@ import java.sql.SQLException;
 import java.util.*;
 
 import Models.Categories;
+import Models.Products;
+import Oracle.OracleSchemaMetaDataProvider;
 import Oracle.OracleTest;
+import Oracle.ionixFactory;
+import ionix.Conversion.Convert;
 import ionix.Data.*;
+import ionix.Utils.Ser;
 
 public final class Program {
 
 
 
     public static void main(String[] args) throws Exception {
-        OracleTest.test();
+
+        try (TransactionalDbAccess dataAccess = ionixFactory.createTransactionalDbAccess()) {
+
+            Categories entity = new Categories().setCategoryName("Bu Insert").setDescription("Bu Insert Açıklama").setPicture(new byte[1024]);
+
+            Repository<Categories> rep = ionixFactory.createRepository(Categories.class, dataAccess);
+            entity =  rep.selectById(dataAccess.executeScalar(int.class, SqlQuery.toQuery("select max(categoryid) from categories")));
+
+           // Convert.Instance
+            for(int j = 0; j < 10; ++j){
+                rep.selectById(dataAccess.executeScalar(int.class, SqlQuery.toQuery("select max(categoryid) from categories")));
+            }
+
+            System.out.println(Ser.toJson(entity));
+          //  rep.insert(entity);
+            dataAccess.commit();
+            System.out.println(entity.getCategoryID());
+        }
+
+      // OracleTest.test();
       //  OracleTest.testCommandAdapter();
         //OracleTest.testCommandFactory();
 //        Connection conn = SqlServerTest.createConnection();
@@ -22,37 +46,37 @@ public final class Program {
 //        System.out.println((ec instanceof BatchCommandExecute));
 
 
-        //SqlServerTest.testBatchDelete();
-
-       // SqlServerTest.testBatchInsert();
-
-      //  SqlServerTest.testInsert();
-     //   SqlServerTest.testBatchInsert();
-
-       // SqlServerTest.testInsert();
-       // SqlServerTest.testSelectById();
-      //  SqlServerTest.testSelect();
-      //  SqlServerTest.testSelectSingle();
-       // SqlServerTest.testQuery();
-       // SqlServerTest.testQuerySingle();
-       // SqlServerTest.testUpdate();
-       // SqlServerTest.testInsert();
-      //  SqlServerTest.testBatchUpdate();
-       // SqlServerTest.testBatchInsert();
-       // SqlServerTest.testDelete();
+//        SqlServerTest.testBatchDelete();
+//
+//        SqlServerTest.testBatchInsert();
+//
+//        SqlServerTest.testInsert();
+//        SqlServerTest.testBatchInsert();
+//
+//        SqlServerTest.testInsert();
+//        SqlServerTest.testSelectById();
+//        SqlServerTest.testSelect();
+//        SqlServerTest.testSelectSingle();
+//        SqlServerTest.testQuery();
+//        SqlServerTest.testQuerySingle();
+//        SqlServerTest.testUpdate();
+//        SqlServerTest.testInsert();
+//        SqlServerTest.testBatchUpdate();
+//        SqlServerTest.testBatchInsert();
+//        SqlServerTest.testDelete();
 
 
       //  OracleTest.testBatchDelete();
-//        OracleTest.testBatchInsert();
-//        OracleTest.testInsert();
-      //  OracleTest.testBatchUpdate();
-       // OracleTest.testDelete();
-//        OracleTest.testSelect();
-//        OracleTest.testSelectSingle();
-//        OracleTest.testQuery();
-//        OracleTest.testQuerySingle();
-//        OracleTest.testSelectById();
-//        OracleTest.testUpdate();
+     //   OracleTest.testBatchInsert();
+      //  OracleTest.testInsert();
+       // OracleTest.testBatchUpdate();
+      //  OracleTest.testDelete();
+     //   OracleTest.testSelect();
+      //  OracleTest.testSelectSingle();
+      //  OracleTest.testQuery();
+     //   OracleTest.testQuerySingle();
+       // OracleTest.testSelectById();
+      //  OracleTest.testUpdate();
 //
 //        OracleTest.sequenceTest();
 
@@ -65,8 +89,6 @@ public final class Program {
 //            System.out.println(rs.getObject(1));
 //        }
 
-//        SqlServerTest.testBatchUpdate();
-//        SqlServerTest.testBatchInsert();
     }
 
 

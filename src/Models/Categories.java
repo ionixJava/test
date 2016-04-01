@@ -6,6 +6,7 @@ import ionix.Data.SqlValueType;
 import ionix.Data.StoreGeneratedPattern;
 
 
+//Değişti???
 @Table(schema = "NORTHWND.DBO",name="Categories")
 public class Categories {
     @DbSchema(columnName = "CategoryID", isKey = true,databaseGeneratedOption = StoreGeneratedPattern.Identity)
@@ -32,13 +33,13 @@ public class Categories {
         return this;
     }
 
-//    @DbSchema(columnName = "Picture")
-//    private byte[] picture;
-//    public byte[]  getPicture(){
-//        return this.picture;
-//    }
-//    public Categories setPicture(byte[]  value){
-//        this.picture = value;
-//        return this;
-//    }
+    @DbSchema(columnName = "Picture")
+    private byte[] picture;
+    public byte[]  getPicture(){
+        return this.picture;
+    }
+    public Categories setPicture(byte[]  value){
+        this.picture = value;
+        return this;
+    }
 }
